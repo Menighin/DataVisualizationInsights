@@ -40,7 +40,7 @@ db.once('open', function() {
 Mongoose.connect('mongodb://localhost/dvinsights');
 
 var app = express();
-
+app.listen(3000);
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
@@ -52,6 +52,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+// app.use('/scripts', express.static(path.join(__dirname, 'public')));
 
 // Make our db accessible to our router
 app.use(function(req,res,next){
