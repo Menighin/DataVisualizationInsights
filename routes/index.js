@@ -3,7 +3,12 @@ var router = express.Router();
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
+  res.render('index', { title: 'Express', activeNav: 'home' });
+});
+
+/* GET Pies On Map - HighCharts. */
+router.get('/piemaphc', function(req, res, next) {
+    res.render('piesonmaphc', { title: 'Express', activeNav: 'piemaphc' });
 });
 
 /* GET Hello World page. */
@@ -14,7 +19,6 @@ router.get('/helloworld', function(req, res) {
 /* GET Userlist page. */
 router.get('/userlist', function(req, res) {
     var db = req.db;
-    console.log('oi');
     console.log(db.User);
     console.log(User);
 });
