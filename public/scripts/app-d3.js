@@ -47,6 +47,48 @@ $(document).ready(function() {
             }).on('mouseout', function() {
                 tooltip.classed('hidden', true);
             });
+        
+        var pie = d3.layout.pie();
+        var pieData = [5, 10, 15, 20];
+        var outerRadius = 20;
+        var innerRadius = 0;
+        var arc = d3.svg.arc()
+            .innerRadius(innerRadius)
+            .outerRadius(outerRadius);
+
+        var arcs = g.selectAll("g.arc")
+            .data(pie(pieData))
+            .enter()
+            .append("g")
+            .attr("class", "arc")
+            .attr("transform", "translate(" + projection([-43.794456, -21.194476])[0] + ", " + projection([-43.794456, -21.194476])[1] + ")");
+
+        var color = d3.scale.category10();
+        arcs.append("path")
+            .attr("fill", function(d, i) {
+                return color(i);
+            })
+            .attr("d", arc)
+            .transition().delay(function(d, i) { return i * 0; }).duration(500)
+            .attrTween('d', function(d) {
+                var i = d3.interpolate(d.startAngle+0.1, d.endAngle);
+                return function(t) {
+                    d.endAngle = i(t);
+                    return arc(d);
+                }
+            });
+
+        // Add circles
+        // var aa = [-47.9, -1.3];
+        // var bb = [ -53.47, -24.99];
+        // var cc = [-43.794456, -21.194476];
+        // g.selectAll("circle")
+        //     .data([aa, bb, cc]).enter()
+        //     .append("circle")
+        //     .attr("cx", function (d) { console.log(d); console.log(projection(d)); return projection(d)[0]; })
+        //     .attr("cy", function (d) { return projection(d)[1]; })
+        //     .attr("r", "8px")
+        //     .attr("fill", "red");
     });
 
     function zoomed() {

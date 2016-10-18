@@ -6,6 +6,11 @@ router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express', activeNav: 'home' });
 });
 
+/* GET Pies On Map - D3. */
+router.get('/piemapd3', function(req, res, next) {
+  res.render('piesonmapd3', { title: 'Express', activeNav: 'piemapd3' });
+});
+
 /* GET Pies On Map - HighCharts. */
 router.get('/piemaphc', function(req, res, next) {
     res.render('piesonmaphc', { title: 'Express', activeNav: 'piemaphc' });

@@ -7,6 +7,7 @@ html
     script(src='/scripts/jquery.min.js')
     script(src='/scripts/bootstrap.js')
     script(src='/scripts/d3.js')
+    script(src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.3.6/proj4.js")
     script(src='/scripts/highcharts.js')
     script(src='/scripts/highcharts-more.js')
     script(src='/scripts/map.js')
@@ -21,6 +22,7 @@ html
         .col-sm-3.col-md-2.sidebar
           ul.nav.nav-sidebar
             li#nav-home: a(href='/') Home
+            li#nav-piemapd3: a(href='/piemapd3') Pies on Map - D3
             li#nav-piemaphc: a(href='/piemaphc') Pies on Map - HighCharts
 
     block content
