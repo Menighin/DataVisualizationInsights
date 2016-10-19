@@ -17,7 +17,7 @@ $(document).ready(function() {
 
     var zoom = d3.behavior.zoom()
         .scaleExtent([1, 8])
-        .on("zoom", zoomed);
+        .on('zoom', zoomed);
 
     var tooltip = d3.select('.map').append('div')
             .attr('class', 'hidden tooltip');
@@ -56,39 +56,59 @@ $(document).ready(function() {
             .innerRadius(innerRadius)
             .outerRadius(outerRadius);
 
-        var arcs = g.selectAll("g.arc")
-            .data(pie(pieData))
-            .enter()
-            .append("g")
-            .attr("class", "arc")
-            .attr("transform", "translate(" + projection([-43.794456, -21.194476])[0] + ", " + projection([-43.794456, -21.194476])[1] + ")");
-
         var color = d3.scale.category10();
-        arcs.append("path")
-            .attr("fill", function(d, i) {
-                return color(i);
-            })
-            .attr("d", arc)
-            .transition().delay(function(d, i) { return i * 0; }).duration(500)
-            .attrTween('d', function(d) {
-                var i = d3.interpolate(d.startAngle+0.1, d.endAngle);
-                return function(t) {
-                    d.endAngle = i(t);
-                    return arc(d);
-                }
-            });
 
-        // Add circles
-        // var aa = [-47.9, -1.3];
-        // var bb = [ -53.47, -24.99];
-        // var cc = [-43.794456, -21.194476];
-        // g.selectAll("circle")
-        //     .data([aa, bb, cc]).enter()
-        //     .append("circle")
-        //     .attr("cx", function (d) { console.log(d); console.log(projection(d)); return projection(d)[0]; })
-        //     .attr("cy", function (d) { return projection(d)[1]; })
-        //     .attr("r", "8px")
-        //     .attr("fill", "red");
+        d3.csv('../csv/ConservationFlow.csv', function(data) {
+
+            for (var i = 0; i < data.length; i++)
+            {
+
+                if (data[i].Week != 1) continue;
+
+                var pieData = [data[i].Production, data[i].Sales, data[i].Transfer];
+                var pieLat = data[i].Latitude, 
+                    pieLon = data[i].Longitude;
+                var pieName = data[i].OriginCenter.replace(' ', '-');
+
+                var pieGroup = g.append('g')
+                    .attr('class', 'pie-chart')
+                    .attr('id', pieName)
+                    .data(pieData);
+
+                var arcs = pieGroup.selectAll('g.arc')
+                    .data(pie(pieData))
+                    .enter()
+                    .append('g')
+                    .attr('class', 'arc')
+                    .attr('transform', 'translate(' + projection([pieLon, pieLat])[0] + ', ' + projection([pieLon, pieLat])[1] + ')');
+                
+                arcs.append('path')
+                    .attr('fill', function(d, i) {
+                        return color(i);
+                    })
+                    .attr('d', arc)
+                    .transition().delay(function(d, i) { return i * 0; }).duration(500)
+                    .attrTween('d', function(d) {
+                        var i = d3.interpolate(d.startAngle+0.1, d.endAngle);
+                        return function(t) {
+                            d.endAngle = i(t);
+                            return arc(d);
+                        }
+                    });
+
+                arcs.append('text')
+                    .attr('transform', function(d) {
+                        return 'translate(' + arc.centroid(d) + ')';
+                    })
+                    .attr('text-anchor', 'middle')
+                    .attr('font-size', '6px')
+                    .text(function(d) {
+                        if (d.value != 0)
+                            return d.value;
+                        return '';
+                    });
+            }
+        });
     });
 
     function zoomed() {
