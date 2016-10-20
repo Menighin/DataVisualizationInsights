@@ -60,15 +60,62 @@ $(document).ready(function() {
 
         d3.csv('../csv/ConservationFlow.csv', function(data) {
 
-            for (var i = 0; i < data.length; i++)
-            {
+            var processedData = [];
 
-                if (data[i].Week != 1) continue;
+            for (var i = 0; i < data.length; i++) {
+                var d = data[i];
 
-                var pieData = [data[i].Production, data[i].Sales, data[i].Transfer];
-                var pieLat = data[i].Latitude, 
-                    pieLon = data[i].Longitude;
-                var pieName = data[i].OriginCenter.replace(' ', '-');
+                if (d.Week != 1) continue;
+
+                d.x = projection([d.Longitude, d.Latitude])[0];
+                d.y = projection([d.Longitude, d.Latitude])[1];
+
+                var minDist = 10000000;
+                var minDistId = -1;
+                for (var j = 0; j < processedData.length; j++) {
+
+                    var d2 = processedData[j];
+
+                    if (d2.OriginCenter == d.OriginCenter) continue;
+
+                    var dist = Math.sqrt(Math.pow(d.x - d2.x, 2) + Math.pow(d.y - d2.y, 2));
+                    // console.log('Distance between ' + d.OriginCenter + ' and ' + d2.OriginCenter + ': ' + dist);
+                    if (dist < minDist) {
+                        minDist = dist;
+                        minDistId = j;
+                    }
+                }
+                // console.log('------------');
+                // console.log(processedData);
+                // console.log('------------');
+                
+
+                if (minDistId != -1) {
+                    d.closer = minDistId;
+                    d.closerDistance = minDist;
+                    if (typeof processedData[minDistId].closerDistance == 'undefined' || processedData[minDistId].closerDistance > minDist) {
+                        processedData[minDistId].closer = processedData.length - 1;
+                        processedData[minDistId].closerDistance = minDist;
+                    }
+                }
+
+                processedData.push(d);
+            }            
+
+            for (var i = 0; i < processedData.length; i++) {
+
+                var d = processedData[i];
+
+                console.log('Closest to ' + d.OriginCenter + ' is ' + processedData[d.closer].OriginCenter + ' by ' + d.closerDistance);
+                
+                var pieData = pie([d.Production, d.Sales, d.Transfer]);
+                var pieLat = d.Latitude, 
+                    pieLon = d.Longitude;
+                var pieName = d.OriginCenter.replace(' ', '-');
+
+                for (var j = 0; j < pieData.length; j++) {
+                    pieData[j].name = pieName;
+                }
 
                 var pieGroup = g.append('g')
                     .attr('class', 'pie-chart')
@@ -76,11 +123,11 @@ $(document).ready(function() {
                     .data(pieData);
 
                 var arcs = pieGroup.selectAll('g.arc')
-                    .data(pie(pieData))
+                    .data(pieData)
                     .enter()
                     .append('g')
                     .attr('class', 'arc')
-                    .attr('transform', 'translate(' + projection([pieLon, pieLat])[0] + ', ' + projection([pieLon, pieLat])[1] + ')');
+                    .attr('transform', 'translate(' + d.x + ', ' + d.y + ')');
                 
                 arcs.append('path')
                     .attr('fill', function(d, i) {
@@ -104,7 +151,7 @@ $(document).ready(function() {
                     .attr('font-size', '6px')
                     .text(function(d) {
                         if (d.value != 0)
-                            return d.value;
+                            return d.name;
                         return '';
                     });
             }
