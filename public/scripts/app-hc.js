@@ -1,5 +1,7 @@
 $(document).ready(function() {
 
+	var pieColors = [];
+
 	Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'getCenter', function(p) {
 		var centerOptions = this.options.center,
 			centerLatLonOptions = this.options.centerLatLon,
@@ -43,7 +45,11 @@ $(document).ready(function() {
 				if (d.Week == 1) {
 					pieData.push({
 						type: 'pie',
-						data: [parseFloat(d.Sales), parseFloat(d.Transfer), parseFloat(d.Production)],
+						data: [
+							{name: 'Sales', y: parseFloat(d.Sales)},
+							{name: 'Transfer', y: parseFloat(d.Transfer)},
+							{name: 'Production', y: parseFloat(d.Production)}
+						],
 						size: '5%',
 						centerLatLon: [parseFloat(d.Latitude), parseFloat(d.Longitude)]
 					});
@@ -51,24 +57,29 @@ $(document).ready(function() {
 					mappoints.push({
 						name: d.OriginCenter,
 						lat: d.Latitude,
-						lon: d.Longitude
+						lon: d.Longitude,
+						dataLabels: {
+							y: -20
+						}
 					});
 				}
 			}
 
-			var series = [{
-				mapData: result,
-				name: 'Basemap',
-				borderColor: '#A0A0A0',
-				nullColor: 'rgba(200, 200, 200, 0.3)',
-				showInLegend: false
-			}, {
-				// Specify points using lat/lon
-				type: 'mappoint',
-				name: 'Cities',
-				color: Highcharts.getOptions().colors[1],
-				data: mappoints
-			}];
+			var series = [
+				{
+					mapData: result,
+					name: 'Basemap',
+					borderColor: '#A0A0A0',
+					nullColor: 'rgba(200, 200, 200, 0.3)',
+					showInLegend: false
+				}, 
+				{
+					type: 'mappoint',
+					name: 'Centers',
+					color: Highcharts.getOptions().colors[1],
+					data: mappoints
+				}
+			];
 
 			pieData.forEach(function(d) {
 				series.push(d);
@@ -108,12 +119,19 @@ $(document).ready(function() {
 				},
 				tooltip: {
 					headerFormat: '',
-					pointFormat: '<b>{point.name}</b><br>Lat: {point.lat}, Lon: {point.lon}'
+					pointFormat: '<b>{point.name}</b>:<br/> {point.y:.1f}t ({point.percentage:.1f}%)'
 				},
 				plotOptions: {
 					pie: {
 						dataLabels: {
-						enabled: false
+							enabled: false,
+						},
+						events: {
+							click: function (event) {
+								var data = event.point;
+								$('#modal-click .modal-body').html('<strong>' + data.name + '</strong>: ' + data.y + 't (' + data.percentage + '%)');
+								$('#modal-click').modal('show');
+							}
 						}
 					}
 				},

@@ -104,7 +104,7 @@ body {
 }
 
 .map {
-  min-height: 600px;
+  min-height: 800px;
   border: 1px solid #ccc;
   background-color: #fcfcfc;
 }
