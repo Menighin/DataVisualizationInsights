@@ -1,0 +1,27 @@
+extends layout
+
+style(type='text/css').
+    path.link {
+    fill: none;
+    stroke: #666;
+    stroke-width: 1.5px;
+    }
+
+    circle {
+    fill: #ccc;
+    stroke: #fff;
+    stroke-width: 1.5px;
+    }
+
+    text {
+    fill: #000;
+    font: 10px sans-serif;
+    pointer-events: none;
+    }
+
+block content
+    .col-sm-9.col-sm-offset-3.col-md-10.col-md-offset-2.main
+        h1.page-header Graph over Map - D3
+        .map.col-md-12
+
+    script(src='/scripts/app-graph-d3.js')

@@ -5,39 +5,39 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
-var Mongoose = require('Mongoose');
-var db = Mongoose.connection;
+// var Mongoose = require('Mongoose');
+// var db = Mongoose.connection;
 var routes = require('./routes/index');
 var users = require('./routes/users');
 
 
-db.on('error', console.error);
-db.once('open', function() {
-  console.log('Conectado ao MongoDB.');
+// db.on('error', console.error);
+// db.once('open', function() {
+//   console.log('Conectado ao MongoDB.');
 
-  var userSchema = new Mongoose.Schema({
-    username: String,
-    email: String
-  });
+//   var userSchema = new Mongoose.Schema({
+//     username: String,
+//     email: String
+//   });
 
-  var User = Mongoose.model('User', userSchema);
+//   var User = Mongoose.model('User', userSchema);
 
-  module.exports = User;
+//   module.exports = User;
 
-  // var user1 = new User({
-  //   username: 'FromNodeJS',
-  //   email: 'fromnodejs@visualcode.com'
-  // });
+//   // var user1 = new User({
+//   //   username: 'FromNodeJS',
+//   //   email: 'fromnodejs@visualcode.com'
+//   // });
 
-  // user1.save(function(err, user1) {
-  //   if (err) return console.error(err);
-  //   console.log('Salvo: ');
-  //   console.log(user1);
-  // });
+//   // user1.save(function(err, user1) {
+//   //   if (err) return console.error(err);
+//   //   console.log('Salvo: ');
+//   //   console.log(user1);
+//   // });
 
-});
+// });
 
-Mongoose.connect('mongodb://localhost/dvinsights');
+// Mongoose.connect('mongodb://localhost/dvinsights');
 
 var app = express();
 app.listen(3000);
@@ -56,7 +56,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Make our db accessible to our router
 app.use(function(req,res,next){
-    req.db = db;
+    // req.db = db;
     next();
 });
 

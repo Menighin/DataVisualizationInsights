@@ -11,6 +11,11 @@ router.get('/piemapd3', function(req, res, next) {
   res.render('piesonmapd3', { title: 'Express', activeNav: 'piemapd3' });
 });
 
+/* GET Pies On Map - D3. */
+router.get('/graphd3', function(req, res, next) {
+  res.render('graphd3', { title: 'Express', activeNav: 'graphd3' });
+});
+
 /* GET Pies On Map - HighCharts. */
 router.get('/piemaphc', function(req, res, next) {
     res.render('piesonmaphc', { title: 'Express', activeNav: 'piemaphc' });
